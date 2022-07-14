@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePost;
 use App\Models\Blogpost;
 use Illuminate\Http\Request;
 
@@ -43,7 +44,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -52,9 +53,17 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePost $request)
     {
-        //
+
+        $validated = $request->validated();
+        $post = BlogPost::create($validated);
+
+        
+
+        $request->session()->flash('status','The blog post was created!');
+
+        return redirect()->route('posts.show',['post'=>$post->id]);
     }
 
     /**
@@ -78,7 +87,9 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        
+        return view('posts.edit', ['post'=>Blogpost::findOrFail($id)]);
+
     }
 
     /**
@@ -90,7 +101,14 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $post = Blogpost::findOrFail($id);
+        $post->title = $request->title;
+        $post->content = $request->content;
+        $post->save();
+        
+        $request->session()->flash('status','Blog post was updated!');
+
+        return redirect()->route('posts.show',['post'=>$post->id]);
     }
 
     /**
@@ -101,6 +119,10 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Blogpost::findOrFail($id);
+        $post->delete();
+
+        session()->flash('status','Blog post was deleted !');
+        return redirect()->route('posts.index');
     }
 }
