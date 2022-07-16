@@ -25,11 +25,13 @@
             </nav>
         </div>
         @if(session('status'))
-            <div class="alert alert-success" style="background:red;color:white">
+            <div class="alert alert-success">
                 {{ session('status') }}
             </div>
         @endif
+        <div class="container">
         @yield('content')
+        </div>
     
 </body>
 </html>
